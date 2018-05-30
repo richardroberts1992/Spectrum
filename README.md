@@ -45,3 +45,5 @@ This Colour object `c' now contains the interpolated colour between the upper an
   //Return hex colour value
   std::string hexCol = getHexColour();
 ```
+
+
