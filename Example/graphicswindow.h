@@ -9,6 +9,11 @@ public:
     explicit GraphicsWindow(QWidget *parent=0);
     void paintGL();
     void initializeGL();
+    void setupView();
+    void selectColourMap();
+    QVector<QRectF> generateBarList(int size);
+
+    void drawBar(QRectF box, QString name, double percent);
 
 };
 
