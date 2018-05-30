@@ -14,7 +14,7 @@ void GraphicsWindow::paintGL()
 
 void GraphicsWindow::initializeGL()
 {
-    glClearColor(1,0,0,1);
+    glClearColor(0.9f,0.9f,0.9f,1);
 }
 
 
