@@ -2,7 +2,8 @@ Spectrum Library
 ===
 This library enables a developer to abstract away from the time consuming imlementation of colour map management and focus on the project. The Spectrum library is an open source C++ header library that is simple to use with no installation required. Just add the .h file to your project and you're good to go.
 
-##Basic Use
+Basic Use
+--
 First off, the developer needs to call the init function as early as possible in the program run time...
 
 ```
