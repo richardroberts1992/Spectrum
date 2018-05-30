@@ -10,10 +10,28 @@ public:
     void paintGL();
     void initializeGL();
     void setupView();
+    void setupAxis();
     void selectColourMap();
     QVector<QRectF> generateBarList(int size);
 
+    void drawAxis();
     void drawBar(QRectF box, QString name, double percent);
+
+
+    QPointF AxisOrigin() const;
+    void setAxisOrigin(const QPointF &AxisOrigin);
+
+    QPointF AxisX() const;
+    void setAxisX(const QPointF &AxisX);
+
+    QPointF AxisY() const;
+    void setAxisY(const QPointF &AxisY);
+
+private:
+
+    QPointF m_AxisOrigin;
+    QPointF m_AxisX;
+    QPointF m_AxisY;
 
 };
 
