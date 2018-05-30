@@ -30,6 +30,11 @@ void GraphicsWindow::selectColourMap()
     ColourManager::setColourMapIndex(cMap.getIndex());
 }
 
+QVector<QRectF> GraphicsWindow::generateBarList(int size)
+{
+
+}
+
 void GraphicsWindow::drawBar(QRectF box, QString name, double percent)
 {
     float upperY = box.top();
