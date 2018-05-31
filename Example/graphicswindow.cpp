@@ -3,7 +3,7 @@
 #include <QOpenGLFunctions>
 #include "colourmanager.h"
 #include "GL/freeglut.h"
-
+#include <ctime>
 GraphicsWindow::GraphicsWindow(QWidget *parent)
 {
 
@@ -13,28 +13,29 @@ void GraphicsWindow::paintGL()
 {
     setupView();
     setupData();
-    drawChart(generateBarList(30));
+    drawChart(ChartBarList);
     drawAxis();
 }
 
 void GraphicsWindow::initializeGL()
 {
+    ChartBarList.clear();
     setupView();
     selectColourMap();
 }
 
 void GraphicsWindow::selectColourMap()
 {
-    //Get the first Diverging colour map in list.
-    ColourMap cMap = CMList::getMapList(CMClassification::DIVERGING)[1];
+    //Get the first SEQUENTIAL colour map in list.
+    ColourMap cMap = CMList::getMapList(CMClassification::SEQUENTIAL)[0];
 
     //Sets the current map
     ColourManager::setColourMapIndex(cMap.getIndex());
 }
 
-QVector<ChartBar> GraphicsWindow::generateBarList(int size)
+void GraphicsWindow::generateBarList(int size)
 {
-    QVector<ChartBar> barList;
+    ChartBarList.clear();
     float AxisHeight = abs(AxisOrigin().y()-AxisY().y());
     float AxisWidth = abs(AxisOrigin().x()-AxisX().x());
     float barWidth = AxisWidth/(float)size;
@@ -45,10 +46,9 @@ QVector<ChartBar> GraphicsWindow::generateBarList(int size)
         float h = AxisHeight*(value/100.0f);
         QRectF r(movingX,AxisOrigin().y(),barWidth,h);
         ChartBar bar("Student " + QString::number(i),r,value);
-        barList.push_back(bar);
+        ChartBarList.push_back(bar);
         movingX+=barWidth;
     }
-    return barList;
 }
 
 void GraphicsWindow::drawAxis()
@@ -103,6 +103,34 @@ void GraphicsWindow::drawBar(ChartBar bar)
 
 }
 
+void GraphicsWindow::sortChartByValue()
+{
+    //----------------Timer------------------------//
+    std::clock_t start = std::clock();
+    double duration;
+    //---------------------------------------------//
+    std::sort(ChartBarList.begin(),ChartBarList.end(),
+              [](const ChartBar &a, const ChartBar &b){
+        return(a.Value() < b.Value());
+    });
+    //----------------------End-Timer---------------------------//
+    duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
+    //qDebug() << "Time to sort list by value = " << duration;
+    //----------------------------------------------------------//
+
+    float AxisWidth = abs(AxisOrigin().x()-AxisX().x());
+    float barWidth = AxisWidth/(float)ChartBarList.size();
+    float movingX=AxisOrigin().x();
+
+    for(int i=0;i<ChartBarList.size();i++){
+        ChartBar &bar = ChartBarList[i];
+        bar.setLeft(movingX);
+        movingX+=barWidth;
+        bar.setRight(movingX);
+    }
+    update();
+}
+
 QPointF GraphicsWindow::AxisOrigin() const
 {
     return m_AxisOrigin;
@@ -132,6 +160,16 @@ void GraphicsWindow::setAxisY(const QPointF &AxisY)
 {
     m_AxisY = AxisY;
 }
+int GraphicsWindow::BarCount() const
+{
+    return m_BarCount;
+}
+
+void GraphicsWindow::setBarCount(int BarCount)
+{
+    m_BarCount = BarCount;
+}
+
 
 
 

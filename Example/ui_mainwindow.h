@@ -13,10 +13,14 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QDockWidget>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QSlider>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
@@ -33,12 +37,18 @@ public:
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
+    QDockWidget *dockWidget;
+    QWidget *dockWidgetContents_4;
+    QSlider *barCountHorizontalSlider;
+    QLabel *label;
+    QLabel *barCountLabelValue;
+    QPushButton *sortListPushButton;
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(797, 729);
+        MainWindow->resize(1053, 729);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         gridLayout = new QGridLayout(centralWidget);
@@ -53,7 +63,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 797, 21));
+        menuBar->setGeometry(QRect(0, 0, 1053, 21));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -61,6 +71,32 @@ public:
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
         MainWindow->setStatusBar(statusBar);
+        dockWidget = new QDockWidget(MainWindow);
+        dockWidget->setObjectName(QStringLiteral("dockWidget"));
+        QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(dockWidget->sizePolicy().hasHeightForWidth());
+        dockWidget->setSizePolicy(sizePolicy);
+        dockWidget->setMinimumSize(QSize(150, 38));
+        dockWidgetContents_4 = new QWidget();
+        dockWidgetContents_4->setObjectName(QStringLiteral("dockWidgetContents_4"));
+        barCountHorizontalSlider = new QSlider(dockWidgetContents_4);
+        barCountHorizontalSlider->setObjectName(QStringLiteral("barCountHorizontalSlider"));
+        barCountHorizontalSlider->setGeometry(QRect(10, 30, 131, 22));
+        barCountHorizontalSlider->setValue(30);
+        barCountHorizontalSlider->setOrientation(Qt::Horizontal);
+        label = new QLabel(dockWidgetContents_4);
+        label->setObjectName(QStringLiteral("label"));
+        label->setGeometry(QRect(10, 10, 51, 16));
+        barCountLabelValue = new QLabel(dockWidgetContents_4);
+        barCountLabelValue->setObjectName(QStringLiteral("barCountLabelValue"));
+        barCountLabelValue->setGeometry(QRect(90, 10, 47, 13));
+        sortListPushButton = new QPushButton(dockWidgetContents_4);
+        sortListPushButton->setObjectName(QStringLiteral("sortListPushButton"));
+        sortListPushButton->setGeometry(QRect(10, 60, 131, 23));
+        dockWidget->setWidget(dockWidgetContents_4);
+        MainWindow->addDockWidget(static_cast<Qt::DockWidgetArea>(1), dockWidget);
 
         retranslateUi(MainWindow);
 
@@ -70,6 +106,9 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
+        label->setText(QApplication::translate("MainWindow", "Bar Count", 0));
+        barCountLabelValue->setText(QString());
+        sortListPushButton->setText(QApplication::translate("MainWindow", "Sort List", 0));
     } // retranslateUi
 
 };

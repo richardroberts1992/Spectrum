@@ -14,11 +14,13 @@ public:
     void setupAxis();
     void setupData();
     void selectColourMap();
-    QVector<ChartBar> generateBarList(int size);
+    void generateBarList(int size);
 
     void drawAxis();
     void drawChart(QVector<ChartBar> list);
     void drawBar(ChartBar bar);
+
+    void sortChartByValue();
 
 
     QPointF AxisOrigin() const;
@@ -30,8 +32,15 @@ public:
     QPointF AxisY() const;
     void setAxisY(const QPointF &AxisY);
 
+
+    int BarCount() const;
+    void setBarCount(int BarCount);
+
 private:
 
+    QVector<ChartBar> ChartBarList;
+
+    int m_BarCount;
     QPointF m_AxisOrigin;
     QPointF m_AxisX;
     QPointF m_AxisY;
