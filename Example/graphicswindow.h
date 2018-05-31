@@ -1,6 +1,7 @@
 #ifndef GRAPHICSWINDOW_H
 #define GRAPHICSWINDOW_H
 #include<QOpenGLWidget>
+#include "chartbar.h"
 #include "colourmanager.h"
 class GraphicsWindow : public QOpenGLWidget
 {  
@@ -11,11 +12,13 @@ public:
     void initializeGL();
     void setupView();
     void setupAxis();
+    void setupData();
     void selectColourMap();
-    QVector<QRectF> generateBarList(int size);
+    QVector<ChartBar> generateBarList(int size);
 
     void drawAxis();
-    void drawBar(QRectF box, QString name, double percent);
+    void drawChart(QVector<ChartBar> list);
+    void drawBar(ChartBar bar);
 
 
     QPointF AxisOrigin() const;

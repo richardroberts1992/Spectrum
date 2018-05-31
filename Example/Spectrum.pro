@@ -14,10 +14,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    graphicswindow.cpp
+    graphicswindow.cpp \
+    chartbar.cpp
 
 HEADERS  += mainwindow.h \
     graphicswindow.h \
-    colourmanager.h
+    colourmanager.h \
+    chartbar.h
 
 FORMS    += mainwindow.ui

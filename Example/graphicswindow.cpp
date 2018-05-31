@@ -11,9 +11,10 @@ GraphicsWindow::GraphicsWindow(QWidget *parent)
 
 void GraphicsWindow::paintGL()
 {
-
-    generateBarList(20);
-    QVector<QRectF> barList;
+    setupView();
+    setupData();
+    drawChart(generateBarList(20));
+    drawAxis();
 }
 
 void GraphicsWindow::initializeGL()
@@ -31,41 +32,56 @@ void GraphicsWindow::selectColourMap()
     ColourManager::setColourMapIndex(cMap.getIndex());
 }
 
-QVector<QRectF> GraphicsWindow::generateBarList(int size)
+QVector<ChartBar> GraphicsWindow::generateBarList(int size)
 {
-    QVector<QRectF> barList;
+    QVector<ChartBar> barList;
+    float AxisHeight = abs(AxisOrigin().y()-AxisY().y());
+    float AxisWidth = abs(AxisOrigin().x()-AxisX().x());
+    float barWidth = AxisWidth/(float)size;
+    float movingX=AxisOrigin().x();
+
     for(int i=0;i<size;i++){
         float value = qrand()%100;
-        qDebug() << i << value;
+        float h = AxisHeight*(value/100.0f);
+        QRectF r(movingX,h,barWidth,h);
+        ChartBar bar("Student " + QString::number(i),r,value);
+        barList.push_back(bar);
+        movingX+=barWidth;
     }
-
-
     return barList;
 }
 
 void GraphicsWindow::drawAxis()
 {
+    glColor3f(0,0,0);
     glBegin(GL_LINES);
-    glVertex2f(AxisOrigin().x(),AxisOrigin.y());
-    glVertex2f(AxisX.x(),AxisX.y());
-
-    glVertex2f(AxisOrigin().x(),AxisOrigin.y());
-    glVertex2f(AxisY.x(),AxisY.y());
+    glVertex2f(AxisOrigin().x(),AxisOrigin().y());
+    glVertex2f(AxisX().x(),AxisX().y());
+    glVertex2f(AxisOrigin().x(),AxisOrigin().y());
+    glVertex2f(AxisY().x(),AxisY().y());
     glEnd();
 }
 
-void GraphicsWindow::drawBar(QRectF box, QString name, double percent)
+void GraphicsWindow::drawChart(QVector<ChartBar> list)
 {
-    float upperY = box.top();
-    float lowerY = box.bottom();
-    float leftX = box.left();
-    float rightX = box.right();
+    for(int i=0;i<list.size();i++){
+        drawBar(list[i]);
+    }
+}
+
+void GraphicsWindow::drawBar(ChartBar bar)
+{
+
+    float upperY = bar.top();
+    float lowerY = bar.bottom();
+    float leftX = bar.left();
+    float rightX = bar.right();
 
     //Instantiate Colour Manager
     ColourManager manager(0,100);
 
     //Get Colour value from
-    Colour col = manager.getInterpolatedColour(percent);
+    Colour col = manager.getInterpolatedColour(bar.Value());
 
     //Set Colour
     glColor3f(col.getR(),col.getG(),col.getB());
@@ -76,6 +92,7 @@ void GraphicsWindow::drawBar(QRectF box, QString name, double percent)
     glVertex2f(rightX,lowerY);
     glVertex2f(leftX,lowerY);
     glEnd();
+
 }
 
 QPointF GraphicsWindow::AxisOrigin() const
@@ -149,7 +166,12 @@ void GraphicsWindow::setupAxis()
 
     setAxisOrigin(QPointF(xDist,yDist));
     setAxisX(QPointF((width()-xDist),yDist));
-    setAxisy(QPointF(xDist,(height()-yDist)));
+    setAxisY(QPointF(xDist,(height()-yDist)));
+}
+
+void GraphicsWindow::setupData()
+{
+    setupAxis();
 }
 
 
