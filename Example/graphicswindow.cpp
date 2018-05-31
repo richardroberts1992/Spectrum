@@ -13,7 +13,7 @@ void GraphicsWindow::paintGL()
 {
     setupView();
     setupData();
-    drawChart(generateBarList(20));
+    drawChart(generateBarList(30));
     drawAxis();
 }
 
@@ -26,7 +26,7 @@ void GraphicsWindow::initializeGL()
 void GraphicsWindow::selectColourMap()
 {
     //Get the first Diverging colour map in list.
-    ColourMap cMap = CMList::getMapList(CMClassification::DIVERGING)[0];
+    ColourMap cMap = CMList::getMapList(CMClassification::DIVERGING)[1];
 
     //Sets the current map
     ColourManager::setColourMapIndex(cMap.getIndex());
@@ -43,7 +43,7 @@ QVector<ChartBar> GraphicsWindow::generateBarList(int size)
     for(int i=0;i<size;i++){
         float value = qrand()%100;
         float h = AxisHeight*(value/100.0f);
-        QRectF r(movingX,h,barWidth,h);
+        QRectF r(movingX,AxisOrigin().y(),barWidth,h);
         ChartBar bar("Student " + QString::number(i),r,value);
         barList.push_back(bar);
         movingX+=barWidth;
@@ -87,6 +87,14 @@ void GraphicsWindow::drawBar(ChartBar bar)
     glColor3f(col.getR(),col.getG(),col.getB());
 
     glBegin(GL_QUADS);
+    glVertex2f(leftX,upperY);
+    glVertex2f(rightX,upperY);
+    glVertex2f(rightX,lowerY);
+    glVertex2f(leftX,lowerY);
+    glEnd();
+
+    glColor3f(1,1,1);
+    glBegin(GL_LINE_LOOP);
     glVertex2f(leftX,upperY);
     glVertex2f(rightX,upperY);
     glVertex2f(rightX,lowerY);
@@ -142,7 +150,7 @@ void GraphicsWindow::setAxisY(const QPointF &AxisY)
 
 void GraphicsWindow::setupView()
 {
-    glClearColor(0.9f,0.9f,0.9f,1);
+    glClearColor(1,1,1,1);
     glClear(GL_COLOR_BUFFER_BIT);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
