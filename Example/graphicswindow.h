@@ -2,7 +2,6 @@
 #define GRAPHICSWINDOW_H
 #include<QOpenGLWidget>
 #include "chartbar.h"
-#include "colourmanager.h"
 class GraphicsWindow : public QOpenGLWidget
 {  
     Q_OBJECT
@@ -19,6 +18,7 @@ public:
     void drawAxis();
     void drawChart(QVector<ChartBar> list);
     void drawBar(ChartBar bar);
+    void drawBarLabels(ChartBar bar);
 
     void sortChartByValue();
 

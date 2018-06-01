@@ -19,7 +19,7 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     graphicswindow.h \
-    colourmanager.h \
-    chartbar.h
+    chartbar.h \
+    colourmanager.h
 
 FORMS    += mainwindow.ui

@@ -1,5 +1,6 @@
 #include "graphicswindow.h"
 #include <QDebug>
+#include <QPainter>
 #include <QOpenGLFunctions>
 #include "colourmanager.h"
 #include "GL/freeglut.h"
@@ -31,42 +32,6 @@ void GraphicsWindow::selectColourMap()
 
     //Sets the current map
     ColourManager::setColourMapIndex(cMap.getIndex());
-}
-
-void GraphicsWindow::generateBarList(int size)
-{
-    ChartBarList.clear();
-    float AxisHeight = abs(AxisOrigin().y()-AxisY().y());
-    float AxisWidth = abs(AxisOrigin().x()-AxisX().x());
-    float barWidth = AxisWidth/(float)size;
-    float movingX=AxisOrigin().x();
-
-    for(int i=0;i<size;i++){
-        float value = qrand()%100;
-        float h = AxisHeight*(value/100.0f);
-        QRectF r(movingX,AxisOrigin().y(),barWidth,h);
-        ChartBar bar("Student " + QString::number(i),r,value);
-        ChartBarList.push_back(bar);
-        movingX+=barWidth;
-    }
-}
-
-void GraphicsWindow::drawAxis()
-{
-    glColor3f(0,0,0);
-    glBegin(GL_LINES);
-    glVertex2f(AxisOrigin().x(),AxisOrigin().y());
-    glVertex2f(AxisX().x(),AxisX().y());
-    glVertex2f(AxisOrigin().x(),AxisOrigin().y());
-    glVertex2f(AxisY().x(),AxisY().y());
-    glEnd();
-}
-
-void GraphicsWindow::drawChart(QVector<ChartBar> list)
-{
-    for(int i=0;i<list.size();i++){
-        drawBar(list[i]);
-    }
 }
 
 void GraphicsWindow::drawBar(ChartBar bar)
@@ -101,6 +66,71 @@ void GraphicsWindow::drawBar(ChartBar bar)
     glVertex2f(leftX,lowerY);
     glEnd();
 
+    drawBarLabels(bar);
+
+}
+
+void GraphicsWindow::drawBarLabels(ChartBar bar)
+{
+    QPainter painter(this);
+    QFont font = painter.font();
+    font.setPointSize(font.pointSize() * 1.3f);
+    painter.setFont(font);
+
+    float barX = bar.left()-((bar.left()-bar.right())/2.0f);
+    float upY = height()-bar.bottom()-5;
+    float loY = height()-bar.top()+10;
+
+    painter.save();
+    painter.translate(QPoint(barX,loY));
+    painter.rotate(90);
+    painter.drawText(QPointF(0,0),bar.Name());
+    painter.rotate(-90);
+    painter.restore();
+
+
+    if(true){
+        painter.drawText(QPoint(barX-5,upY),QString::number(bar.Value()));
+    }
+
+
+}
+
+void GraphicsWindow::drawAxis()
+{
+    //Axis Lines
+    glColor3f(0,0,0);
+    glBegin(GL_LINES);
+    glVertex2f(AxisOrigin().x(),AxisOrigin().y());
+    glVertex2f(AxisX().x(),AxisX().y());
+    glVertex2f(AxisOrigin().x(),AxisOrigin().y());
+    glVertex2f(AxisY().x(),AxisY().y());
+    glEnd();
+
+    //Axis Labels
+    QPainter painter(this);
+    QPen blackPen(Qt::black);
+    QFont font = painter.font();
+    font.setPointSize(font.pointSize() * 1.3f);
+    painter.setFont(font);
+    painter.setPen(blackPen);
+
+    QPoint pl = QPoint(AxisOrigin().x()-10,height()-AxisOrigin().y());
+    QPoint pu = QPoint(AxisY().x()-35,height()-AxisY().y()+10);
+    painter.drawText(pl,"0");
+    painter.drawText(pu,"100%");
+
+    QPoint pm = QPoint(AxisOrigin().x()-10,(height()/2.0f)-AxisOrigin().y()+50);
+
+    painter.save();
+    painter.translate(pm);
+    painter.rotate(-90);
+    painter.drawText(QPointF(-30,0),"Percent");
+    painter.rotate(90);
+    painter.restore();
+
+    QPoint titlePos((width()/2.0f)-20,height()*0.05f);
+    painter.drawText(titlePos, "Student Test Scores");
 }
 
 void GraphicsWindow::sortChartByValue()
@@ -129,6 +159,32 @@ void GraphicsWindow::sortChartByValue()
         bar.setRight(movingX);
     }
     update();
+}
+
+void GraphicsWindow::generateBarList(int size)
+{
+    ChartBarList.clear();
+    float AxisHeight = abs(AxisOrigin().y()-AxisY().y());
+    float AxisWidth = abs(AxisOrigin().x()-AxisX().x());
+    float barWidth = AxisWidth/(float)size;
+    float movingX=AxisOrigin().x();
+
+    for(int i=0;i<size;i++){
+        float value = qrand()%100;
+        float h = AxisHeight*(value/100.0f);
+        QRectF r(movingX,AxisOrigin().y(),barWidth,h);
+        ChartBar bar("Stu " + QString::number(i+1),r,value);
+        ChartBarList.push_back(bar);
+        movingX+=barWidth;
+    }
+    update();
+}
+
+void GraphicsWindow::drawChart(QVector<ChartBar> list)
+{
+    for(int i=0;i<list.size();i++){
+        drawBar(list[i]);
+    }
 }
 
 QPointF GraphicsWindow::AxisOrigin() const
@@ -160,6 +216,7 @@ void GraphicsWindow::setAxisY(const QPointF &AxisY)
 {
     m_AxisY = AxisY;
 }
+
 int GraphicsWindow::BarCount() const
 {
     return m_BarCount;
@@ -169,22 +226,6 @@ void GraphicsWindow::setBarCount(int BarCount)
 {
     m_BarCount = BarCount;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 void GraphicsWindow::setupView()
 {
